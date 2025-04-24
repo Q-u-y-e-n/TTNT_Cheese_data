@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kết quả dự đoán</title>
+</head>
+<body>
+    {% if error %}
+        <h2 style="color: red;">{{ error }}</h2>
+    {% else %}
+        <h2>Kết quả dự đoán độ béo:</h2>
+        <ul>
+            <li>Hương vị: {{ flavour }}</li>
+            <li>Đặc điểm: {{ characteristics }}</li>
+            <li>Loại: {{ category }}</li>
+            <li>Loại sữa: {{ milk_type }}</li>
+            <li>Xử lý sữa: {{ milk_treatment }}</li>
+            <li><strong>Độ béo dự đoán: {{ fat_content }}</strong></li>
+        </ul>
+    {% endif %}
+    <a href="/">← Quay lại</a>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dự đoán độ béo phô mai</title>
+</head>
+<body>
+    <h1>Nhập thông tin phô mai để dự đoán độ béo</h1>
+    <form action="/predict" method="post">
+        <label>Hương vị (Flavour):</label>
+        <input name="flavour" placeholder="Ví dụ: Bitter, Creamy, Nutty" required><br>
+
+        <label>Đặc điểm (Characteristics):</label>
+        <input name="characteristics" placeholder="Ví dụ: Firm, Soft, Crumbly" required><br>
+
+        <label>Loại (Category):</label>
+        <input name="category" placeholder="Ví dụ: Blue Cheese, Fresh Cheese" required><br>
+
+        <label>Loại sữa (Milk Type):</label>
+        <input name="milk_type" placeholder="Ví dụ: Cow, Goat, Sheep" required><br>
+
+        <label>Xử lý sữa (Milk Treatment):</label>
+        <input name="milk_treatment" placeholder="Ví dụ: Pasteurized, Raw" required><br>
+
+        <input type="submit" value="Dự đoán">
+    </form>
+</body>
+</html>
