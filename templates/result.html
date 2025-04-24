@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kết quả dự đoán</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .result {
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #2196F3;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Kết quả dự đoán</h1>
+
+    {% if error %}
+    <div class="error">
+        <p>{{ error }}</p>
+    </div>
+    {% else %}
+    <div class="result">
+        <h3>Mô tả hương vị:</h3>
+        <p>{{ flavor }}</p>
+
+        <h3>Mức độ béo dự đoán:</h3>
+        <p>{{ fat_content }}</p>
+    </div>
+    {% endif %}
+
+    <a href="/" class="back-btn">Quay lại</a>
+</body>
+
+</html>
