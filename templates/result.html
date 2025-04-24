@@ -2,21 +2,61 @@
 <html>
 <head>
     <title>Kết quả dự đoán</title>
+    <style>
+        .container-body{
+           color: white;
+        }
+        .header-result{
+            font-size: 3rem;
+            padding: 5px 30px;
+            color: #d1be1c;
+        }
+        
+        .result-list{
+            list-style: none;
+            padding-left: 5rem;
+            font-size: 1.5rem;
+        }
+        .result-continue{
+            background-color: rgb(41 206 198);
+            font-size: 2rem;
+            margin: 0 auto;
+            display: flex;
+            border-radius: 10px;
+        ;
+            justify-content: center;
+            padding: 5px
+        }
+        li {
+            margin: 5px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .back{
+            margin-top: 20px;
+
+        }
+    </style>
 </head>
-<body>
+<body style="background-color: #f4f4f4; font-family: Arial, sans-serif;
+            padding: 20px; display: flex; justify-content: center; align-items: center;
+            background-image: url('{{ url_for('static', filename='dudoan.jpg') }}');
+            background-repeat: no-repeat;
+            background-size: 100%;
+ ">
+    <div class="container-body">
+       
     {% if error %}
         <h2 style="color: red;">{{ error }}</h2>
     {% else %}
-        <h2>Kết quả dự đoán độ béo:</h2>
-        <ul>
-            <li>Hương vị: {{ flavour }}</li>
-            <li>Đặc điểm: {{ characteristics }}</li>
-            <li>Loại: {{ category }}</li>
-            <li>Loại sữa: {{ milk_type }}</li>
-            <li>Xử lý sữa: {{ milk_treatment }}</li>
-            <li><strong>Độ béo dự đoán: {{ fat_content }}</strong></li>
-        </ul>
+        <h2 class="header-result">Kết quả dự đoán độ béo</h2>
+       
+        <p class="result-continue"><b>Độ béo dự đoán: {{ fat_content }}</b></p>
+        <br>
     {% endif %}
-    <a href="/">← Quay lại</a>
+    <a class="back" href="/">← Quay lại</a>
+</div>
 </body>
 </html>

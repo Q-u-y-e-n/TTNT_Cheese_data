@@ -1,33 +1,47 @@
-import pickle
 import pandas as pd
-from flask import Flask, request, render_template
+import pickle
+from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
 
-# Tải mô hình và label encoders
-print("Đang tải mô hình...")
-try:
-    with open("decision_tree_model.pkl", "rb") as f:
-        model_data = pickle.load(f)
+# Tải mô hình và encoders
+with open("decision_tree_model.pkl", "rb") as f:
+    model_data = pickle.load(f)
 
-    model = model_data['model']
-    label_encoders = model_data['label_encoders']
-    print("✅ Đã tải mô hình thành công!")
-except Exception as e:
-    print(f"❌ Lỗi khi tải mô hình: {e}")
-    print("⚠️ Vui lòng chạy train.py trước để tạo mô hình.")
+model = model_data['model']
+label_encoders = model_data['label_encoders']
+target_encoder = model_data['target_encoder']
 
-# Các cột phân loại (phải trùng tên trong file CSV)
-categorical_columns = ['FlavourEn', 'CharacteristicsEn', 'CategoryTypeEn', 'MilkTypeEn', 'MilkTreatmentTypeEn']
+# Tải lại dữ liệu gốc để lọc động
+df_raw = pd.read_csv('cheese_data.csv', encoding='latin1')
+df_raw = df_raw[['FlavourEn', 'CharacteristicsEn', 'CategoryTypeEn', 'MilkTypeEn', 'MilkTreatmentTypeEn']].dropna()
 
 @app.route('/')
-def home():
-    return render_template('index.html')
+def index():
+    flavour_options = sorted(df_raw['FlavourEn'].unique())
+    return render_template('index.html', flavour_options=flavour_options)
+
+@app.route('/get_options', methods=['POST'])
+def get_options():
+    selected = request.get_json()  # Lấy JSON từ frontend
+    filtered = df_raw.copy()
+
+    # Lọc theo dữ liệu đã chọn
+    for key, value in selected.items():
+        filtered = filtered[filtered[key] == value]
+
+    # Trả về các giá trị có thể tiếp theo
+    all_columns = ['FlavourEn', 'CharacteristicsEn', 'CategoryTypeEn', 'MilkTypeEn', 'MilkTreatmentTypeEn']
+    result = {}
+    for col in all_columns:
+        if col not in selected:
+            result[col] = sorted(filtered[col].unique())
+
+    return jsonify(result)
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Lấy dữ liệu từ form
         input_data = {
             'FlavourEn': request.form['flavour'],
             'CharacteristicsEn': request.form['characteristics'],
@@ -36,24 +50,16 @@ def predict():
             'MilkTreatmentTypeEn': request.form['milk_treatment']
         }
 
-        # Tạo DataFrame từ input
         input_df = pd.DataFrame([input_data])
-
-        # Mã hóa các cột bằng label encoder đã lưu
-        for col in categorical_columns:
+        for col in input_data:
             le = label_encoders[col]
             input_df[col] = le.transform(input_df[col])
 
-        # Dự đoán
         prediction = model.predict(input_df)[0]
+        prediction_label = target_encoder.inverse_transform([prediction])[0]
 
-        return render_template('result.html',
-                               flavour=input_data['FlavourEn'],
-                               characteristics=input_data['CharacteristicsEn'],
-                               category=input_data['CategoryTypeEn'],
-                               milk_type=input_data['MilkTypeEn'],
-                               milk_treatment=input_data['MilkTreatmentTypeEn'],
-                               fat_content=prediction)
+        return render_template('result.html', **input_data, fat_content=prediction_label)
+
     except Exception as e:
         return render_template('result.html', error=f"Có lỗi xảy ra: {str(e)}")
 
