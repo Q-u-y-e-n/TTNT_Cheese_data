@@ -1,55 +1,63 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Kết quả dự đoán</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+        .container-body{
+           color: white;
+        }
+        .header-result{
+            font-size: 3rem;
+            padding: 5px 30px;
+            color: #d1be1c;
+        }
+        
+        .result-list{
+            list-style: none;
+            padding-left: 5rem;
+            font-size: 1.5rem;
+        }
+        .result-continue{
+            background-color: rgb(41 206 198);
+            font-size: 2rem;
             margin: 0 auto;
-            padding: 20px;
+            display: flex;
+            border-radius: 10px;
+        ;
+            justify-content: center;
+            padding: 5px
         }
-
-        .result {
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
+        li {
+            margin: 5px 0;
         }
-
-        .error {
-            color: red;
-        }
-
-        .back-btn {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #2196F3;
-            color: white;
+        a {
             text-decoration: none;
+            color: #007BFF;
+        }
+        .back{
+            margin-top: 20px;
+
         }
     </style>
 </head>
-
-<body>
-    <h1>Kết quả dự đoán</h1>
-
+<body style="background-color: #f4f4f4; font-family: Arial, sans-serif;
+            padding: 20px; display: flex; justify-content: center; align-items: center;
+            background-image: url('{{ url_for('static', filename='nehe10.jpg') }}');
+            background-repeat: no-repeat;
+            background-size: 100%;
+ ">
+    <div class="container-body">
+       
     {% if error %}
-    <div class="error">
-        <p>{{ error }}</p>
-    </div>
+        <h2 style="color: red;">{{ error }}</h2>
     {% else %}
-    <div class="result">
-        <h3>Mô tả hương vị:</h3>
-        <p>{{ flavor }}</p>
-
-        <h3>Mức độ béo dự đoán:</h3>
-        <p>{{ fat_content }}</p>
-    </div>
+        <h2 class="header-result">Kết quả dự đoán độ béo</h2>
+       
+        <p class="result-continue"><b>Độ béo dự đoán: {{ fat_content }}</b></p>
+        <br>
     {% endif %}
-
-    <a href="/" class="back-btn">Quay lại</a>
+    <a class="back" href="/">← Quay lại</a>
+</div>
 </body>
-
 </html>

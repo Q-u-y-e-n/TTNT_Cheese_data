@@ -1,29 +1,121 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dự đoán độ béo của phô mai</title>
+    <meta charset="UTF-8">
+    <title>Dự đoán độ béo phô mai</title>
+    <script>
+        const columnMapping = {
+            "flavour": "FlavourEn",
+            "characteristics": "CharacteristicsEn",
+            "category": "CategoryTypeEn",
+            "milk_type": "MilkTypeEn",
+            "milk_treatment": "MilkTreatmentTypeEn"
+        };
+    
+        function updateOptions(changedSelectId) {
+            const selects = ["flavour", "characteristics", "category", "milk_type", "milk_treatment"];
+            let data = {};
+    
+            for (let id of selects) {
+                let val = document.getElementById(id).value;
+                if (val) {
+                    data[columnMapping[id]] = val;
+                }
+                if (id === changedSelectId) break;
+            }
+    
+            fetch("/get_options", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(options => {
+                for (let key in options) {
+                    const id = Object.keys(columnMapping).find(k => columnMapping[k] === key);
+                    const select = document.getElementById(id);
+                    select.innerHTML = `<option value="">-- Chọn --</option>`;
+                    options[key].forEach(opt => {
+                        select.innerHTML += `<option value="${opt}">${opt}</option>`;
+                    });
+                }
+            });
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('{{ url_for('static', filename='nehe10.jpg') }}');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            margin: 0 auto;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+        h2{
+            color: #d1be1c;
+            font-size: 3rem;
+            text-align: center;
+        }
+        </style>
 </head>
 <body>
-    <h1>Nhập thông tin phô mai để dự đoán độ béo</h1>
-<form action="/predict" method="post">
-    <label>Hương vị (Flavour):</label>
-    <input name="flavour" placeholder="Ví dụ: Bitter, Creamy, Nutty" required><br>
+    <div class="container-body">
+    <h2>Dự đoán độ béo phô mai</h2>
+    <form method="POST" action="/predict">
+        <label>Flavour:</label>
+        <select name="flavour" id="flavour" onchange="updateOptions('flavour')" required>
+            <option value="">-- Chọn --</option>
+            {% for opt in flavour_options %}
+                <option value="{{ opt }}">{{ opt }}</option>
+            {% endfor %}
+        </select><br>
 
-    <label>Đặc điểm (Characteristics):</label>
-    <input name="characteristics" placeholder="Ví dụ: Firm, Soft, Crumbly" required><br>
+        <label>Characteristics:</label>
+        <select name="characteristics" id="characteristics" onchange="updateOptions('characteristics')" required></select><br>
 
-    <label>Loại (Category):</label>
-    <input name="category" placeholder="Ví dụ: Blue Cheese, Fresh Cheese" required><br>
+        <label>Category:</label>
+        <select name="category" id="category" onchange="updateOptions('category')" required></select><br>
 
-    <label>Loại sữa (Milk Type):</label>
-    <input name="milk_type" placeholder="Ví dụ: Cow, Goat, Sheep" required><br>
+        <label>Milk Type:</label>
+        <select name="milk_type" id="milk_type" onchange="updateOptions('milk_type')" required></select><br>
 
-    <label>Quy trình xử lý sữa (Milk Treatment):</label>
-    <input name="milk_treatment" placeholder="Ví dụ: Pasteurized, Raw" required><br>
+        <label>Milk Treatment:</label>
+        <select name="milk_treatment" id="milk_treatment" required></select><br>
 
-    <input type="submit" value="Dự đoán">
-</form>
-
+        <button type="submit">Dự đoán</button>
+    </form>
+</div>
 </body>
 </html>

@@ -7,19 +7,26 @@ from sklearn.model_selection import train_test_split
 # Đọc dữ liệu
 df = pd.read_csv("cheese_data.csv")
 
+# Kiểm tra và xử lý giá trị thiếu
+df = df.dropna(subset=['FlavourEn', 'CharacteristicsEn', 'CategoryTypeEn', 'MilkTypeEn', 'MilkTreatmentTypeEn', 'FatLevel'])
+
 # Các cột phân loại
 categorical_columns = ['FlavourEn', 'CharacteristicsEn', 'CategoryTypeEn', 'MilkTypeEn', 'MilkTreatmentTypeEn']
 
-# Khởi tạo và áp dụng LabelEncoder
+# Khởi tạo và áp dụng LabelEncoder cho các cột phân loại
 encoders = {}
 for col in categorical_columns:
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
     encoders[col] = le
 
+# Khởi tạo LabelEncoder cho cột mục tiêu 'FatLevel'
+target_encoder = LabelEncoder()
+df['FatLevel'] = target_encoder.fit_transform(df['FatLevel'])  # Chuyển đổi 'FatLevel' thành số
+
 # Chọn cột đầu vào (X) và đầu ra (y)
 X = df[categorical_columns]
-y = df['FatLevel']  # hoặc cột đích phù hợp
+y = df['FatLevel']
 
 # Chuẩn hóa
 scaler = StandardScaler()
@@ -37,7 +44,8 @@ with open("knn_model.pkl", "wb") as f:
     pickle.dump({
         "model": knn_model,
         "scaler": scaler,
-        "encoders": encoders
+        "encoders": encoders,
+        "target_encoder": target_encoder  # Lưu target_encoder
     }, f)
 
 print("✅ Đã lưu mô hình, scaler và encoders thành công!")
